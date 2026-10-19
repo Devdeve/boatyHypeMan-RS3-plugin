@@ -1,0 +1,10 @@
+{
+    "name": "Boaty Hype Man plugin",
+    "version": "1",
+    "contactEmailAddress": "example.email@jagex.com",
+    "hasRibbonIcon": true,
+    "hasSettingsIcon": false,
+    "requiredPermissions": [],
+    "optionalPermissions": ["chatAccess"],
+    "requiredDependencies": {"prettyui": 6398181}
+}
