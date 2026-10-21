@@ -8,31 +8,31 @@ local CachedSettings = {}
 -- Settings and their default values/types
 local ValidSettings = {
     enableLevelUps = {
-        default = false,
+        default = true,
         type = "boolean"
     },
     enableQuestCompletions = {
-        default = false,
+        default = true,
         type = "boolean"
     },
     enableCollectionLogs = {
-        default = false,
+        default = true,
         type = "boolean"
     },
     enableCombatAchievements = {
-        default = false,
+        default = true,
         type = "boolean"
     },
     enableDeaths = {
-        default = false,
+        default = true,
         type = "boolean"
     },
     enablePetDrops = {
-        default = false,
+        default = true,
         type = "boolean"
     },
     enableExpensiveDrops = {
-        default = false,
+        default = true,
         type = "boolean"
     }
 }
