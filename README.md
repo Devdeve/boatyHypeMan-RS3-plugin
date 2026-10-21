@@ -8,7 +8,7 @@ Quest Completions
 
 Collection Logs
 
-Combat Achievements
+Achievements
 
 Deaths
 
