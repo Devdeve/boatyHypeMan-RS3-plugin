@@ -19,15 +19,13 @@ function PluginShutdown()
 end
 
 -- Sound Params
--- Makes it play despite audio settings
 local soundParams = audio.SoundPlaybackParams.new()
 soundParams.type = audio.SoundType.SCRIPT
-soundParams.audioBus = audio.AudioBus.MASTER
+soundParams.audioBus = audio.AudioBus.MASTER -- Makes it play despite audio settings
 soundParams.volume = 0.2 -- 20%
 soundParams.delayTick = 0
-soundParams.samplingRate = 100 -- Default = 256, which is also used when samplingRate is 0
 
-
+-- Level ups
 function skillTransmitFunc(skillTransmitEvent)
     if Settings.get("enableLevelUps") then
         if skillTransmitEvent.newGameplayLevel > skillTransmitEvent.oldGameplayLevel then
@@ -49,11 +47,7 @@ function skillTransmitFunc(skillTransmitEvent)
 end
 Event.SkillTransmit.Subscribe("myEvent", skillTransmitFunc)
 
--- TODO Combat Achievs
-
--- EXPENSIVE DROPS
--- TODO GE PRICE?
-
+-- TODO GE PRICE? (currently uses cost * 0.6 which is high alch value)
 function announceDrop(item_cost)
     if item_cost * 0.6 >= var.VarPlayer.LOOT_BEAM.value then
         sound = math.random(4)
@@ -133,25 +127,27 @@ function announceQuest()
 end
 
 function messageFunc(chatMessageEvent)
-    -- TODO CLOGS TEST
+    -- Clogs, Clogging, Collection Log
     if string.find(chatMessageEvent.chatMessage, "New collection log entry") then
         if Settings.get("enableCollectionLogs") then
             announceClog()
         end
     end
+    
+    -- Death
     if string.find(chatMessageEvent.chatMessage, "Oh dear, you are dead!") then
         if Settings.get("enableDeaths") then
             announceDeath()
         end
     end
     
-    -- TODO Pet Drops
+    -- Pet Drops (Boss)
     if string.find(chatMessageEvent.chatMessage, Player.GetEntity().displayName .. " has received .* pet drop .*", 1) then
         if Settings.get("enablePetDrops") then
             announcePet()
         end
     end
-    -- TODO TEST
+    -- Pet drops (XP/Skilling)
     if string.find(chatMessageEvent.chatMessage, Player.GetEntity().displayName .. " has received .* at .*!", 1) then
         if Settings.get("enablePetDrops") then
             announcePet()
@@ -159,7 +155,7 @@ function messageFunc(chatMessageEvent)
     end
 
 
-    -- TODO TEST
+    -- Quest
     if string.find(chatMessageEvent.chatMessage, "Congratulations! You have completed:", 1) then
         if Settings.get("enableQuestCompletions") then
             announceQuest()
@@ -180,9 +176,7 @@ function announceCombatTask()
     end 
 end
 
-
-
-local function varTest(varTransmitEvent)
+local function varEventTransmitted(varTransmitEvent)
     local lvar = varTransmitEvent.var
     if lvar.typeName == "VarPlayer" and lvar.valueType == 131 and lvar.configName == "CHEEVO_RECENT_COMPLETE_1" then
         if var.value.category == id.Category.COMBAT then
@@ -190,4 +184,4 @@ local function varTest(varTransmitEvent)
         end
     end
 end
-Event.VarTransmit.Subscribe("achievementTracker", varTest)
+Event.VarTransmit.Subscribe("achievementTracker", varEventTransmitted)
