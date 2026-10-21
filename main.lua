@@ -52,16 +52,16 @@ function announceDrop(item_cost)
     if item_cost * 0.6 >= var.VarPlayer.LOOT_BEAM.value then
         sound = math.random(4)
         if sound == 1 then
-            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money1, soundParams)
+            local playDropSound = audio.Play(Plugin.resources.sounds.money.money1, soundParams)
         end 
         if sound == 2 then
-            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money2, soundParams)
+            local playDropSound = audio.Play(Plugin.resources.sounds.money.money2, soundParams)
         end 
         if sound == 3 then
-            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money3, soundParams)
+            local playDropSound = audio.Play(Plugin.resources.sounds.money.money3, soundParams)
         end 
         if sound == 4 then
-            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money4, soundParams)
+            local playDropSound = audio.Play(Plugin.resources.sounds.money.money4, soundParams)
         end
     end
 end

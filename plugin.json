@@ -1,7 +1,7 @@
 {
     "name": "Boaty Hype Man plugin",
     "version": "1",
-    "contactEmailAddress": "example.email@jagex.com",
+    "contactEmailAddress": "boatyhypemanplugin@gmail.com",
     "hasRibbonIcon": true,
     "hasSettingsIcon": false,
     "requiredPermissions": [],
