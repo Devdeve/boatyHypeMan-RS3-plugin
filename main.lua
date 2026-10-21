@@ -153,6 +153,12 @@ function messageFunc(chatMessageEvent)
             announcePet()
         end
     end
+    -- Pet drops (Artemis)
+    if string.find(chatMessageEvent.chatMessage, "While solving the clue, you find a golden compass. It has been added to your inventory.", 1) then
+        if Settings.get("enablePetDrops") then
+            announcePet()
+        end
+    end
 
 
     -- Quest
