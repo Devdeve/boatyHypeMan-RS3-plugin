@@ -153,13 +153,12 @@ function messageFunc(chatMessageEvent)
             announcePet()
         end
     end
-    -- Pet drops (XP/Skilling)
+    -- Pet drops (Artemis)
     if string.find(chatMessageEvent.chatMessage, Player.GetEntity().displayName .. " solved a Treasure Trail .* compass!", 1) then
         if Settings.get("enablePetDrops") then
             announcePet()
         end
     end
-
 
     -- Quest
     if string.find(chatMessageEvent.chatMessage, "Congratulations! You have completed:", 1) then
@@ -171,23 +170,23 @@ function messageFunc(chatMessageEvent)
 end
 Event.ChatMessage.Subscribe("myEvent", messageFunc)
 
---Combat Task
-function announceCombatTask()
-    sound = math.random(2)
-    if sound == 1 then
-        local playLevelupSound = audio.Play(Plugin.resources.sounds.combat_task.combat_task1, soundParams)
-    end 
-    if sound == 2 then
-        local playLevelupSound = audio.Play(Plugin.resources.sounds.combat_task.combat_task2, soundParams)
-    end 
+--Achievement
+function announceAchievement()
+    if Settings.get("enableAchievements") then
+        sound = math.random(2)
+        if sound == 1 then
+            local playLevelupSound = audio.Play(Plugin.resources.sounds.achievement.achievement1, soundParams)
+        end 
+        if sound == 2 then
+            local playLevelupSound = audio.Play(Plugin.resources.sounds.achievement.achievement2, soundParams)
+        end 
+    end
 end
 
 local function varEventTransmitted(varTransmitEvent)
     local lvar = varTransmitEvent.var
     if lvar.typeName == "VarPlayer" and lvar.valueType == 131 and lvar.configName == "CHEEVO_RECENT_COMPLETE_1" then
-        if var.value.category == id.Category.COMBAT then
-            announceCombatTask()
-        end
+        announceAchievement()
     end
 end
 Event.VarTransmit.Subscribe("achievementTracker", varEventTransmitted)

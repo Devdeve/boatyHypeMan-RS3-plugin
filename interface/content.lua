@@ -14,7 +14,7 @@ Event.ContentLayerReady.Subscribe("boaty-hype-man-content-pane", function(event)
         { text = "Enable Level ups", value = "enableLevelUps",  selected = Settings.get("enableLevelUps") },
         { text = "Enable Quest Completions", value = "enableQuestCompletions", selected = Settings.get("enableQuestCompletions") },
         { text = "Enable Collection Logs", value = "enableCollectionLogs",      selected = Settings.get("enableCollectionLogs") },
-        { text = "Enable Combat Achievements", value = "enableCombatAchievements",     selected = Settings.get("enableCombatAchievements") },
+        { text = "Enable Achievements", value = "enableAchievements",     selected = Settings.get("enableAchievements") },
         { text = "Enable Deaths", value = "enableDeaths", selected = Settings.get("enableDeaths") },
         { text = "Enable Pet Drops", value = "enablePetDrops",    selected = Settings.get("enablePetDrops") },
         { text = "Enable Expensive drops", value = "enableExpensiveDrops", selected = Settings.get("enableExpensiveDrops") },

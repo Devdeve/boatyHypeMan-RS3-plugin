@@ -19,7 +19,7 @@ local ValidSettings = {
         default = true,
         type = "boolean"
     },
-    enableCombatAchievements = {
+    enableAchievements = {
         default = true,
         type = "boolean"
     },
