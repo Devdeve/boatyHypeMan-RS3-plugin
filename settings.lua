@@ -7,10 +7,6 @@ local CachedSettings = {}
 
 -- Settings and their default values/types
 local ValidSettings = {
-    enabled = {
-        default = true,
-        type = "boolean"
-    },
     enableLevelUps = {
         default = false,
         type = "boolean"

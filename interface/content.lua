@@ -9,16 +9,6 @@ Event.ContentLayerReady.Subscribe("boaty-hype-man-content-pane", function(event)
         width = parent.width,
         height = parent.height,
     })
-
-    contentView:AddTitle("Global Toggle")
-    contentView:AddCheckboxButton({
-        { text = "Enable Plugin", value = "enabled", selected = Settings.get("enabled") },
-    }, {
-        onChange = function(_, _, changedValue, selected)
-            UIUtils.updateSettings(changedValue, selected)
-        end,
-    })
-
     contentView:AddTitle("Toggle Options")
     contentView:AddCheckboxButton({
         { text = "Enable Level ups", value = "enableLevelUps",  selected = Settings.get("enableLevelUps") },

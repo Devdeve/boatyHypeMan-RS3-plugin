@@ -18,22 +18,31 @@ function PluginShutdown()
     end
 end
 
+-- Sound Params
+-- Makes it play despite audio settings
+local soundParams = audio.SoundPlaybackParams.new()
+soundParams.type = audio.SoundType.SCRIPT
+soundParams.audioBus = audio.AudioBus.MASTER
+soundParams.volume = 0.2 -- 20%
+soundParams.delayTick = 0
+soundParams.samplingRate = 100 -- Default = 256, which is also used when samplingRate is 0
+
 
 function skillTransmitFunc(skillTransmitEvent)
     if Settings.get("enableLevelUps") then
         if skillTransmitEvent.newGameplayLevel > skillTransmitEvent.oldGameplayLevel then
             sound = math.random(4)
             if sound == 1 then
-                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup)
+                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup, soundParams)
             end 
             if sound == 2 then
-                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup1)
+                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup1, soundParams)
             end 
             if sound == 3 then
-                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup2)
+                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup2, soundParams)
             end 
             if sound == 4 then
-                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup3)
+                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup3, soundParams)
             end
         end
     end
@@ -49,16 +58,16 @@ function announceDrop(item_cost)
     if item_cost * 0.6 >= var.VarPlayer.LOOT_BEAM.value then
         sound = math.random(4)
         if sound == 1 then
-            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money1)
+            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money1, soundParams)
         end 
         if sound == 2 then
-            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money2)
+            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money2, soundParams)
         end 
         if sound == 3 then
-            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money3)
+            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money3, soundParams)
         end 
         if sound == 4 then
-            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money4)
+            local playLevelupSound = audio.Play(Plugin.resources.sounds.money.money4, soundParams)
         end
     end
 end
@@ -89,10 +98,10 @@ Event.ObjStackEntityChanged.Subscribe("myEvent", objStackChangedFunc)
 function announceClog()
     sound = math.random(2)
     if sound == 1 then
-        local playLevelupSound = audio.Play(Plugin.resources.sounds.collection_log.colllog1)
+        local playClogSound = audio.Play(Plugin.resources.sounds.collection_log.colllog1, soundParams)
     end 
     if sound == 2 then
-        local playLevelupSound = audio.Play(Plugin.resources.sounds.collection_log.colllog2)
+        local playClogSound = audio.Play(Plugin.resources.sounds.collection_log.colllog2, soundParams)
     end 
 end
 
@@ -100,26 +109,26 @@ end
 function announceDeath()
     sound = math.random(2)
     if sound == 1 then
-        local playLevelupSound = audio.Play(Plugin.resources.sounds.death.death1)
+        local playDeathSound = audio.Play(Plugin.resources.sounds.death.death1, soundParams)
     end 
     if sound == 2 then
-        local playLevelupSound = audio.Play(Plugin.resources.sounds.death.death2)
+        local playDeathSound = audio.Play(Plugin.resources.sounds.death.death2, soundParams)
     end 
 end
 
 --Pets
 function announcePet()
-    local playLevelupSound = audio.Play(Plugin.resources.sounds.pet.pet)
+    local playPetSound = audio.Play(Plugin.resources.sounds.pet.pet, soundParams)
 end
 
 --Quest
-function announcePet()
+function announceQuest()
     sound = math.random(2)
     if sound == 1 then
-        local playLevelupSound = audio.Play(Plugin.resources.sounds.quest.quest1)
+        local playQuestSound = audio.Play(Plugin.resources.sounds.quest.quest1, soundParams)
     end 
     if sound == 2 then
-        local playLevelupSound = audio.Play(Plugin.resources.sounds.quest.quest2)
+        local playQuestSound = audio.Play(Plugin.resources.sounds.quest.quest2, soundParams)
     end 
 end
 
@@ -159,3 +168,26 @@ function messageFunc(chatMessageEvent)
 
 end
 Event.ChatMessage.Subscribe("myEvent", messageFunc)
+
+--Combat Task
+function announceCombatTask()
+    sound = math.random(2)
+    if sound == 1 then
+        local playLevelupSound = audio.Play(Plugin.resources.sounds.combat_task.combat_task1, soundParams)
+    end 
+    if sound == 2 then
+        local playLevelupSound = audio.Play(Plugin.resources.sounds.combat_task.combat_task2, soundParams)
+    end 
+end
+
+
+
+local function varTest(varTransmitEvent)
+    local lvar = varTransmitEvent.var
+    if lvar.typeName == "VarPlayer" and lvar.valueType == 131 and lvar.configName == "CHEEVO_RECENT_COMPLETE_1" then
+        if var.value.category == id.Category.COMBAT then
+            announceCombatTask()
+        end
+    end
+end
+Event.VarTransmit.Subscribe("achievementTracker", varTest)
