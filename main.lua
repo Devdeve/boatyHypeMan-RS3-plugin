@@ -147,12 +147,6 @@ function messageFunc(chatMessageEvent)
             announcePet()
         end
     end
-    -- Pet drops (XP/Skilling)
-    if string.find(chatMessageEvent.chatMessage, Player.GetEntity().displayName .. " has received .* at .*!", 1) then
-        if Settings.get("enablePetDrops") then
-            announcePet()
-        end
-    end
     -- Pet drops (Artemis)
     if string.find(chatMessageEvent.chatMessage, Player.GetEntity().displayName .. " solved a Treasure Trail .* compass!", 1) then
         if Settings.get("enablePetDrops") then
