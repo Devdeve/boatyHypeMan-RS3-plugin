@@ -4,7 +4,7 @@
     "contactEmailAddress": "boatyhypemanplugin@gmail.com",
     "hasRibbonIcon": true,
     "hasSettingsIcon": false,
-    "requiredPermissions": ["chatAccess"],
+    "requiredPermissions": [],
     "optionalPermissions": [],
-    "requiredDependencies": {"prettyui": 6398181}
+    "requiredDependencies": {"prettyui": 6398181, "event_sound_library": "event-sound-library"}
 }

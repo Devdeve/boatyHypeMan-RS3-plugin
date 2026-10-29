@@ -1,186 +1,54 @@
 local Settings = require("settings")
+local Content = require("interface/content")
 
-local settingsView = require("interface/settings")
-local contentView = require("interface/content")
+local sounds = Plugin.resources.sounds
+local settingForTrigger = {
+    levelUp = "enableLevelUps",
+    questCompletion = "enableQuestCompletions",
+    collectionLog = "enableCollectionLogs",
+    achievement = "enableAchievements",
+    death = "enableDeaths",
+    petDrop = "enablePetDrops",
+    expensiveDrop = "enableExpensiveDrops",
+}
 
-log("Boaty Hype Man plugin initialised")
+local soundOptions = {
+    sounds = {
+        levelUp = {
+            sounds.level_up.levelup, sounds.level_up.levelup1,
+            sounds.level_up.levelup2, sounds.level_up.levelup3,
+        },
+        questCompletion = { sounds.quest.quest1, sounds.quest.quest2 },
+        collectionLog = { sounds.collection_log.colllog1, sounds.collection_log.colllog2 },
+        achievement = { sounds.achievement.achievement1, sounds.achievement.achievement2 },
+        death = { sounds.death.death1, sounds.death.death2 },
+        petDrop = sounds.pet.pet,
+        expensiveDrop = { sounds.money.money1, sounds.money.money2, sounds.money.money3, sounds.money.money4 },
+    },
+    enabled = function(trigger)
+        return Settings.get(settingForTrigger[trigger])
+    end,
+}
+
+for _, resources in pairs(soundOptions.sounds) do
+    if type(resources) ~= "table" then resources = { resources } end
+    for _, resource in ipairs(resources) do
+        if type(resource) == "userdata" and not resource.loaded then
+            resource:Load()
+        end
+    end
+end
+
+soundOptions.volume = Settings.get("volume") / 100
+local soundRegistration = event_sound_library.new(soundOptions)
+Settings.subscribe("boaty-hype-man-volume", function(name, value)
+    if name == "volume" then
+        soundRegistration:setVolume(value / 100)
+    end
+end)
 
 function PluginShutdown()
-    Event.SettingsLayerReady.Unsubscribe("boaty-hype-man-settings-pane")
-    if settingsView then
-        settingsView:Destroy()
-        settingsView = nil
-    end
-    Event.ContentLayerReady.Unsubscribe("boaty-hype-man-content-pane")
-    if contentView then
-        contentView:Destroy()
-        contentView = nil
-    end
+    Settings.unsubscribe("boaty-hype-man-volume")
+    soundRegistration:dispose()
+    Content.shutdown()
 end
-
--- Sound Params
-local soundParams = audio.SoundPlaybackParams.new()
-soundParams.type = audio.SoundType.SCRIPT
-soundParams.audioBus = audio.AudioBus.MASTER -- Makes it play despite audio settings
-soundParams.volume = 0.2 -- 20%
-soundParams.delayTick = 0
-
--- Level ups
-function skillTransmitFunc(skillTransmitEvent)
-    if Settings.get("enableLevelUps") then
-        if skillTransmitEvent.newGameplayLevel > skillTransmitEvent.oldGameplayLevel then
-            sound = math.random(4)
-            if sound == 1 then
-                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup, soundParams)
-            end 
-            if sound == 2 then
-                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup1, soundParams)
-            end 
-            if sound == 3 then
-                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup2, soundParams)
-            end 
-            if sound == 4 then
-                local playLevelupSound = audio.Play(Plugin.resources.sounds.level_up.levelup3, soundParams)
-            end
-        end
-    end
-end
-Event.SkillTransmit.Subscribe("myEvent", skillTransmitFunc)
-
--- TODO GE PRICE? (currently uses cost * 0.6 which is high alch value)
-function announceDrop(item_cost)
-    if item_cost * 0.6 >= var.VarPlayer.LOOT_BEAM.value then
-        sound = math.random(4)
-        if sound == 1 then
-            local playDropSound = audio.Play(Plugin.resources.sounds.money.money1, soundParams)
-        end 
-        if sound == 2 then
-            local playDropSound = audio.Play(Plugin.resources.sounds.money.money2, soundParams)
-        end 
-        if sound == 3 then
-            local playDropSound = audio.Play(Plugin.resources.sounds.money.money3, soundParams)
-        end 
-        if sound == 4 then
-            local playDropSound = audio.Play(Plugin.resources.sounds.money.money4, soundParams)
-        end
-    end
-end
-
--- whe nan item is dropped in a fresh stack call annoucneDrop
-function objStackAddedFunc(objStackEntityAddedEvent)
-    if Settings.get("enableExpensiveDrops") then
-        announceDrop(objStackEntityAddedEvent.objType.cost)
-    end
-end
-Event.ObjStackEntityAdded.Subscribe("myEvent", objStackAddedFunc)
-
-
--- CHANGED ITEM STACK
-function objStackChangedFunc(objStackEntityChangedEvent)
-    if objStackEntityChangedEvent.oldCount > objStackEntityChangedEvent.newCount then 
-        do return end
-    end
-    if Settings.get("enableExpensiveDrops") then
-        announceDrop(objStackEntityChangedEvent.objType.cost)
-    end
-end
-Event.ObjStackEntityChanged.Subscribe("myEvent", objStackChangedFunc)
-
-
-
---CLOG
-function announceClog()
-    sound = math.random(2)
-    if sound == 1 then
-        local playClogSound = audio.Play(Plugin.resources.sounds.collection_log.colllog1, soundParams)
-    end 
-    if sound == 2 then
-        local playClogSound = audio.Play(Plugin.resources.sounds.collection_log.colllog2, soundParams)
-    end 
-end
-
---Death
-function announceDeath()
-    sound = math.random(2)
-    if sound == 1 then
-        local playDeathSound = audio.Play(Plugin.resources.sounds.death.death1, soundParams)
-    end 
-    if sound == 2 then
-        local playDeathSound = audio.Play(Plugin.resources.sounds.death.death2, soundParams)
-    end 
-end
-
---Pets
-function announcePet()
-    local playPetSound = audio.Play(Plugin.resources.sounds.pet.pet, soundParams)
-end
-
---Quest
-function announceQuest()
-    sound = math.random(2)
-    if sound == 1 then
-        local playQuestSound = audio.Play(Plugin.resources.sounds.quest.quest1, soundParams)
-    end 
-    if sound == 2 then
-        local playQuestSound = audio.Play(Plugin.resources.sounds.quest.quest2, soundParams)
-    end 
-end
-
-function messageFunc(chatMessageEvent)
-    -- Clogs, Clogging, Collection Log
-    if string.find(chatMessageEvent.chatMessage, "New collection log entry") then
-        if Settings.get("enableCollectionLogs") then
-            announceClog()
-        end
-    end
-    
-    -- Death
-    if string.find(chatMessageEvent.chatMessage, "Oh dear, you are dead!") then
-        if Settings.get("enableDeaths") then
-            announceDeath()
-        end
-    end
-    
-    -- Pet Drops (Boss)
-    if string.find(chatMessageEvent.chatMessage, Player.GetEntity().displayName .. " has received .* pet drop .*", 1) then
-        if Settings.get("enablePetDrops") then
-            announcePet()
-        end
-    end
-    -- Pet drops (Artemis)
-    if string.find(chatMessageEvent.chatMessage, Player.GetEntity().displayName .. " solved a Treasure Trail .* compass!", 1) then
-        if Settings.get("enablePetDrops") then
-            announcePet()
-        end
-    end
-
-    -- Quest
-    if string.find(chatMessageEvent.chatMessage, "Congratulations! You have completed:", 1) then
-        if Settings.get("enableQuestCompletions") then
-            announceQuest()
-        end
-    end
-
-end
-Event.ChatMessage.Subscribe("myEvent", messageFunc)
-
---Achievement
-function announceAchievement()
-    if Settings.get("enableAchievements") then
-        sound = math.random(2)
-        if sound == 1 then
-            local playLevelupSound = audio.Play(Plugin.resources.sounds.achievement.achievement1, soundParams)
-        end 
-        if sound == 2 then
-            local playLevelupSound = audio.Play(Plugin.resources.sounds.achievement.achievement2, soundParams)
-        end 
-    end
-end
-
-local function varEventTransmitted(varTransmitEvent)
-    local lvar = varTransmitEvent.var
-    if lvar.typeName == "VarPlayer" and lvar.valueType == 131 and lvar.configName == "CHEEVO_RECENT_COMPLETE_1" then
-        announceAchievement()
-    end
-end
-Event.VarTransmit.Subscribe("achievementTracker", varEventTransmitted)

@@ -1,12 +1,15 @@
-
 local Settings = {}
 
 local PLUGIN_DB_PREFIX = "BoatyHypeMan_"
 
 local CachedSettings = {}
+local listeners = {}
 
--- Settings and their default values/types
 local ValidSettings = {
+    volume = {
+        default = 20,
+        type = "integer"
+    },
     enableLevelUps = {
         default = true,
         type = "boolean"
@@ -47,18 +50,33 @@ local function makeKey(settingName)
     return PLUGIN_DB_PREFIX .. settingName
 end
 
+function Settings.subscribe(name, callback)
+    assert(type(callback) == "function", "Setting listener must be a function")
+    listeners[name] = callback
+end
+
+function Settings.unsubscribe(name)
+    listeners[name] = nil
+end
+
 function Settings.update(settingName, value)
     assertValidSetting(settingName)
 
     local setting = ValidSettings[settingName]
 
-    CachedSettings[settingName] = value
+    if setting.type == "integer" then
+        assert(type(value) == "number" and value % 1 == 0 and value >= 0 and value <= 100,
+            "Volume must be an integer between 0 and 100")
+    end
 
     if setting.type == "boolean" then
         PersistentDB:SetBool(makeKey(settingName), value)
-    elseif setting.type == "string" then
-        PersistentDB:SetString(makeKey(settingName), value)
+    elseif setting.type == "integer" then
+        PersistentDB:SetInt(makeKey(settingName), value)
     end
+
+    CachedSettings[settingName] = value
+    for _, callback in pairs(listeners) do callback(settingName, value) end
 end
 
 function Settings.get(settingName)
@@ -73,8 +91,8 @@ function Settings.get(settingName)
 
     if setting.type == "boolean" then
         value = PersistentDB:GetBool(makeKey(settingName))
-    elseif setting.type == "string" then
-        value = PersistentDB:GetString(makeKey(settingName))
+    elseif setting.type == "integer" then
+        value = PersistentDB:GetInt(makeKey(settingName))
     end
 
     if value == nil then
@@ -82,8 +100,8 @@ function Settings.get(settingName)
 
         if setting.type == "boolean" then
             PersistentDB:SetBool(makeKey(settingName), value)
-        elseif setting.type == "string" then
-            PersistentDB:SetString(makeKey(settingName), value)
+        elseif setting.type == "integer" then
+            PersistentDB:SetInt(makeKey(settingName), value)
         end
     end
 
